@@ -24,3 +24,4 @@
   }
   else throw new TypeError('Invalid type of "prop"');
 }
+module.exports = getProp;
