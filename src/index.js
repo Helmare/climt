@@ -9,10 +9,9 @@ const ClimtCell = require('./cell');
  */
 /**
  * @typedef {object} ClimtColumn
- * @prop {string} id ID of the column. Used for accessing the data for each row.
+ * @prop {string|ClimtBind} bind Binds data to each row using an ID string or a funciton.
  * @prop {string} [name] Display name of the column (ID by default).
  * @prop {number} [_width] Width of the column (may be different from `style.width`). *Should not be set by humans.*
- * @prop {ClimtStringify} [stringify] Stringify callback for a columns data (`data.toString` by default).
  * 
  * @prop {object} [style] Styling for the column.
  * @prop {number} [style.width=0] Width of the column.
@@ -21,8 +20,8 @@ const ClimtCell = require('./cell');
  * @prop {"left"|"right"|"center"} [style.align="left"] Text alignment.
  */
 /**
- * @callback ClimtStringify
- * @param {*} data
+ * @callback ClimtBind
+ * @param {object} row
  * @return {string} 
  */
 /**
@@ -43,7 +42,7 @@ function climt(opts) {
   const cells = [];
   opts.cols.forEach((col, x) => {
     // Setup basic defaults.
-    if (!col.name) col.name = col.id;
+    if (!col.name) col.name = typeof(col.bind) === 'string' ? col.bind : '';
 
     // Apply col.style defaults.
     if (!col.style) col.style = { };
@@ -68,8 +67,7 @@ function climt(opts) {
     // Add each row
     opts.rows.forEach((row, y) => {
       // Grab content
-      const data = getProp(row, col.id);
-      const content = col.stringify ? col.stringify(data) : data.toString();
+      const content = typeof(col.bind) === 'string' ? getProp(row, col.bind).toString() : col.bind(row);
 
       // Setup width
       if (col.style.width <= 0) {
