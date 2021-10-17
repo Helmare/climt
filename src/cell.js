@@ -1,4 +1,3 @@
-const { clearLine } = require('readline');
 const wrap = require('./utils/text-wrap');
 
 class ClimtCell {
@@ -66,7 +65,8 @@ class ClimtCell {
   _align(content) {
     const str = content.trim();
     if (this.col.style.align == 'center') {
-      return str.padStart(Math.floor(this.col._width / 2)).padEnd(this.col._width);
+      const leftover = this.col._width - str.length;
+      return `${''.padStart(Math.floor(leftover / 2))}${str}${''.padStart(Math.ceil(leftover / 2))}`
     }
     else if (this.col.style.align == 'right') {
       return `${str} `.padStart(this.col._width);
