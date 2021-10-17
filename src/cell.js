@@ -1,24 +1,84 @@
+const { clearLine } = require('readline');
+const wrap = require('./utils/text-wrap');
+
 class ClimtCell {
   /**
    * 
    * @param {number} x 
    * @param {number} y 
    * @param {import(".").ClimtColumn} col
-   * @param {string} [content] 
+   * @param {string} content 
+   * @param {boolean} border
    */
-  constructor(x, y, col, content) {
+  constructor(x, y, col, content, border) {
     this.x = x;
     this.y = y;
     this.col = col;
     this.content = content;
+    this.border = border;
+    this._lines = [];
+  }
+
+  /**
+   * @returns {number} height of the cell.
+   */
+  get height() {
+    return this._lines.length;
+  }
+
+  /**
+   * Expands the height of _data to the new height.
+   * Cannot shirnk.
+   * 
+   * @param {number} height new height
+   */
+  expand(height) {
+    if (height > this.height) {
+      for (let i = 0; i <= height - this.height; i++) {
+        this._lines.push(`${''.padStart(this.col._width)}${this.border ? '|' : ''}`);
+      }
+    }
   }
 
   /**
    * Evaluates what the string should be. This might
    * need the column width.
    */
-  eval() {
-    return this.content;
+  _eval() {
+    if (this._lines.length > 0) return;
+
+    let border = this.border ? '|' : '';
+    if (this.content.length > this.col._width - 2) {
+      if (this.col.style.overflow == 'truncate') {
+        this._lines = [` ${this.content.substr(0, this.col._width - 5)}... ${border}`];
+      }
+      else {
+        this._lines = wrap(this.content, this.col._width - 2);
+        this._lines.forEach((line, i) => {
+          this._lines[i] = `${this._align(line)}${border}`;
+        });
+      }
+    }
+    else {
+      this._lines = [`${this._align(this.content)}${border}`];
+    }
+  }
+  /**
+   * Evaluates a single line.
+   * @param {string} str 
+   * @returns {string}
+   */
+  _align(content) {
+    const str = content.trim();
+    if (this.col.style.align == 'center') {
+      return str.padStart(Math.floor(this.col._width / 2)).padEnd(this.col._width);
+    }
+    else if (this.col.style.align == 'right') {
+      return `${str} `.padStart(this.col._width);
+    }
+    else {
+      return ` ${str}`.padEnd(this.col._width);
+    }
   }
 }
 module.exports = ClimtCell;

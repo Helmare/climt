@@ -1,4 +1,4 @@
-const getProp = require('./getprop');
+const getProp = require('./utils/getprop');
 const ClimtCell = require('./cell');
 
 /**
@@ -55,10 +55,10 @@ function climt(opts) {
     }, ...col.style };
 
     // Setup column width
-    col._width = col.style.width;
+    col._width = col.style.width == 0 ? Math.min(col.style.maxWidth, col.name.length + 2) : col.style.width;
 
     // Push header cell.
-    cells.push(new ClimtCell(x, -1, col, col.name));
+    cells.push(new ClimtCell(x, -1, col, col.name, x < opts.cols.length - 1));
 
     // Add each row
     opts.rows.forEach((row, y) => {
@@ -72,14 +72,58 @@ function climt(opts) {
       }
 
       // Push content cell.
-      cells.push(new ClimtCell(x, y, col, content));
+      cells.push(new ClimtCell(x, y, col, content, x < opts.cols.length - 1));
     });
   });
+  // Evaluate cells after cells have been added.
+  cells.forEach(cell => cell._eval());
 
-  return cells.sort((a, b) => {
+  // Sort cells to be in an order easy for rendering.
+  cells.sort((a, b) => {
     const ai = a.x + a.y * opts.cols.length;
     const bi = b.x + b.y * opts.cols.length;
     return ai - bi;
   });
+
+  // Expand row heights to be even.
+  cells.forEach((cell, i) => {
+    const sor = opts.cols.length * Math.floor(i / opts.cols.length);
+    const eor = sor + opts.cols.length;
+    for (let j = sor; j < eor; j++) {
+      if (j != i) {
+        cell.expand(cells[j].height);
+      }
+    }
+  });
+
+  // Prerender
+  const lines = [];
+  const rowy = [];
+  cells.forEach(cell => {
+    // Setup lines and rowy if needed.
+    const y = (rowy[cell.y] | 0);
+    while (lines.length < y + cell.height) {
+      lines.push('');
+    }
+    rowy[cell.y + 1] = y + cell.height;
+
+    // Incorporate data
+    cell._lines.forEach((line, i) => {
+      lines[y + i] += line;
+    });
+  });
+
+  // Add header seperator.
+  let sep = '';
+  opts.cols.forEach(col => {
+    sep += `+${''.padStart(col._width, '-')}`;
+  });
+  sep = sep.substr(1);
+  lines.splice(cells[0].height, 0, sep);
+
+  // Render
+  console.log();
+  lines.forEach(line => console.log(line));
+  console.log();
 }
 module.exports = climt;
