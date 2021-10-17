@@ -16,7 +16,7 @@ const ClimtCell = require('./cell');
  * 
  * @prop {object} [style] Styling for the column.
  * @prop {number} [style.width=0] Width of the column.
- * @prop {number} [style.maxWidth=15] Max width of the column. Ignored if `style.width` is set.
+ * @prop {number} [style.maxWidth=0] Max width of the column. Ignored if `style.width` is set. `<= 0` values allow infinite width.
  * @prop {"wrap"|"truncate"} [style.overflow="wrap"] Determains what to do with overflow.
  * @prop {"left"|"right"|"center"} [style.align="left"] Text alignment.
  */
@@ -49,13 +49,18 @@ function climt(opts) {
     if (!col.style) col.style = { };
     col.style = { ...{
       width: 0,
-      maxWidth: 15,
+      maxWidth: 0,
       overflow: 'wrap',
       align: 'left'
     }, ...col.style };
 
     // Setup column width
-    col._width = col.style.width == 0 ? Math.min(col.style.maxWidth, col.name.length + 2) : col.style.width;
+    if (col.style.width <= 0) {
+      col._width = col.style.maxWidth <= 0 ? col.name.length + 2 : Math.min(col.style.maxWidth, col.name.length + 2);
+    }
+    else {
+      col._width = col.style.width;
+    }
 
     // Push header cell.
     cells.push(new ClimtCell(x, -1, col, col.name, x < opts.cols.length - 1));
@@ -67,8 +72,9 @@ function climt(opts) {
       const content = col.stringify ? col.stringify(data) : data.toString();
 
       // Setup width
-      if (col.style.width <= 0 && col._width < col.style.maxWidth) {
-        col._width = Math.min(col.style.maxWidth, Math.max(col._width, content.length + 2));
+      if (col.style.width <= 0) {
+        const width = Math.max(col._width, content.length + 2);
+        col._width = col.style.maxWidth <= 0 ? width : Math.min(col.style.maxWidth, width);
       }
 
       // Push content cell.
