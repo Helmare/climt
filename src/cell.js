@@ -30,10 +30,8 @@ class ClimtCell {
    * @param {number} height new height
    */
   expand(height) {
-    if (height > this.height) {
-      for (let i = 0; i <= height - this.height; i++) {
-        this._lines.push(''.padStart(this.col._width));
-      }
+    while (this.height < height) {
+      this._lines.push(''.padStart(this.col._width));
     }
   }
 
