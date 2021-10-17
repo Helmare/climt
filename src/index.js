@@ -109,7 +109,10 @@ function climt(opts) {
 
     // Incorporate data
     cell._lines.forEach((line, i) => {
-      lines[y + i] += line;
+      if (opts.format) {
+        line = opts.format(line, cell.x, cell.y);
+      }
+      lines[y + i] += `|${line}`;
     });
   });
 
@@ -118,12 +121,11 @@ function climt(opts) {
   opts.cols.forEach(col => {
     sep += `+${''.padStart(col._width, '-')}`;
   });
-  sep = sep.substr(1);
   lines.splice(cells[0].height, 0, sep);
 
   // Render
   console.log();
-  lines.forEach(line => console.log(line));
+  lines.forEach(line => console.log(line.substr(1)));
   console.log();
 }
 module.exports = climt;

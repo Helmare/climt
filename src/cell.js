@@ -8,14 +8,12 @@ class ClimtCell {
    * @param {number} y 
    * @param {import(".").ClimtColumn} col
    * @param {string} content 
-   * @param {boolean} border
    */
-  constructor(x, y, col, content, border) {
+  constructor(x, y, col, content) {
     this.x = x;
     this.y = y;
     this.col = col;
     this.content = content;
-    this.border = border;
     this._lines = [];
   }
 
@@ -35,7 +33,7 @@ class ClimtCell {
   expand(height) {
     if (height > this.height) {
       for (let i = 0; i <= height - this.height; i++) {
-        this._lines.push(`${''.padStart(this.col._width)}${this.border ? '|' : ''}`);
+        this._lines.push(''.padStart(this.col._width));
       }
     }
   }
@@ -45,22 +43,19 @@ class ClimtCell {
    * need the column width.
    */
   _eval() {
-    if (this._lines.length > 0) return;
-
-    let border = this.border ? '|' : '';
     if (this.content.length > this.col._width - 2) {
       if (this.col.style.overflow == 'truncate') {
-        this._lines = [` ${this.content.substr(0, this.col._width - 5)}... ${border}`];
+        this._lines = [` ${this.content.substr(0, this.col._width - 5)}... `];
       }
       else {
         this._lines = wrap(this.content, this.col._width - 2);
         this._lines.forEach((line, i) => {
-          this._lines[i] = `${this._align(line)}${border}`;
+          this._lines[i] = `${this._align(line)}`;
         });
       }
     }
     else {
-      this._lines = [`${this._align(this.content)}${border}`];
+      this._lines = [`${this._align(this.content)}`];
     }
   }
   /**
