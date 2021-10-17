@@ -24,6 +24,6 @@
   },
   "homepage": "https://github.com/hazdryx/climt#readme",
   "devDependencies": {
-    "@types/node": "^16.11.0"
+    "@types/node": "^16.11.1"
   }
 }
