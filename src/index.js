@@ -1,19 +1,24 @@
 const getProp = require('./getprop');
+const ClimtCell = require('./cell');
+
 /**
  * @typedef {object} ClimtOptions
- * @prop {object[]} cols Array of columns.
- * @prop {string} cols[].id ID of the column.
- * @prop {string} [cols[].name] Display name of the column (ID by default).
- * @prop {string|number} [cols[].prop] Row property used for data (Index by default).
- * @prop {ClimtStringify} [cols[].stringify] Stringify callback for a columns data (`data.toString` by default).
+ * @prop {ClimtColumn[]} cols Array of columns.
+ * @prop {object[]} rows An array of row data.
+ * @prop {ClimtFormat} [format] Color callback for each cell.
+ */
+/**
+ * @typedef {object} ClimtColumn
+ * @prop {string} id ID of the column. Used for accessing the data for each row.
+ * @prop {string} [name] Display name of the column (ID by default).
+ * @prop {number} [_width] Width of the column (may be different from `style.width`). *Should not be set by humans.*
+ * @prop {ClimtStringify} [stringify] Stringify callback for a columns data (`data.toString` by default).
  * 
- * @prop {object} [cols[].style] Styling for the column.
- * @prop {"content"|number} [cols[].style.width="content"] Width of the column.
- * @prop {number} [cols[].style.padding=1] Padding of the string on the left and right side.
- * @prop {"left"|"right"|"center"} [cols[].style.align="left"] Text alignment.
- * @prop {ClimtColor} [cols[].style.color] Color callback for each cell.
- * 
- * @prop {array} rows An array of row data.
+ * @prop {object} [style] Styling for the column.
+ * @prop {number} [style.width=0] Width of the column.
+ * @prop {number} [style.maxWidth=15] Max width of the column. Ignored if `style.width` is set.
+ * @prop {"wrap"|"truncate"} [style.overflow="wrap"] Determains what to do with overflow.
+ * @prop {"left"|"right"|"center"} [style.align="left"] Text alignment.
  */
 /**
  * @callback ClimtStringify
@@ -21,10 +26,11 @@ const getProp = require('./getprop');
  * @return {string} 
  */
 /**
- * @callback ClimtColor
- * @param {string} cell Stringified cell data.
+ * @callback ClimtFormat
+ * @param {string} content Stringified cell data with empty space.
+ * @param {number} col Index of the cell's column.
  * @param {number} row Index of the cell's row (`-1` for header).
- * @return {string}
+ * @return {string} 
  */
 
 /**
@@ -33,6 +39,47 @@ const getProp = require('./getprop');
  * @param {ClimtOptions} opts
  */
 function climt(opts) {
-  return opts;
+  /** @type {ClimtCell[]} */
+  const cells = [];
+  opts.cols.forEach((col, x) => {
+    // Setup basic defaults.
+    if (!col.name) col.name = col.id;
+
+    // Apply col.style defaults.
+    if (!col.style) col.style = { };
+    col.style = { ...{
+      width: 0,
+      maxWidth: 15,
+      overflow: 'wrap',
+      align: 'left'
+    }, ...col.style };
+
+    // Setup column width
+    col._width = col.style.width;
+
+    // Push header cell.
+    cells.push(new ClimtCell(x, -1, col, col.name));
+
+    // Add each row
+    opts.rows.forEach((row, y) => {
+      // Grab content
+      const data = getProp(row, col.id);
+      const content = col.stringify ? col.stringify(data) : data.toString();
+
+      // Setup width
+      if (col.style.width <= 0 && col._width < col.style.maxWidth) {
+        col._width = Math.min(col.style.maxWidth, Math.max(col._width, content.length + 2));
+      }
+
+      // Push content cell.
+      cells.push(new ClimtCell(x, y, col, content));
+    });
+  });
+
+  return cells.sort((a, b) => {
+    const ai = a.x + a.y * opts.cols.length;
+    const bi = b.x + b.y * opts.cols.length;
+    return ai - bi;
+  });
 }
 module.exports = climt;
