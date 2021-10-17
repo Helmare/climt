@@ -1,8 +1,9 @@
 /**
  * @typedef {object} ClimtOptions
- * @prop {object[]} cols Array of columns
- * @prop {string} cols[].name Display name of the column.
- * @prop {string|number} [cols[].prop] Row property used for data (column index by default).
+ * @prop {object[]} cols Array of columns.
+ * @prop {string} cols[].id ID of the column.
+ * @prop {string} [cols[].name] Display name of the column (ID by default).
+ * @prop {string|number} [cols[].prop] Row property used for data (Index by default).
  * @prop {object} [cols[].style] Styling for the column.
  * @prop {"content"|number} [cols[].style.width="content"] Width of the column.
  * @prop {number} [cols[].style.padding=1] Padding of the string on the left and right side.
@@ -31,7 +32,9 @@ function getProp(obj, prop) {
   else if (typeof(prop) === 'string') {
     let result = obj;
     prop.split('.').forEach(key => {
-      result = result[key];
+      if (result && typeof(result) === 'object') {
+        result = result[key];
+      }
     });
     return result;
   }
