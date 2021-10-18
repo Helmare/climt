@@ -67,7 +67,7 @@ function climt(opts) {
     // Add each row
     opts.rows.forEach((row, y) => {
       // Grab content
-      const content = typeof(col.bind) === 'string' ? getProp(row, col.bind).toString() : col.bind(row);
+      const content = typeof(col.bind) === 'string' ? getProp(row, col.bind).toString() : col.bind(row).toString();
 
       // Setup width
       if (col.style.width <= 0) {
