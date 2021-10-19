@@ -14,8 +14,7 @@
     "url": "git+https://github.com/hazdryx/climt.git"
   },
   "keywords": [
-    "cli",
-    "tables"
+    "cli", "minimalist", "tables"
   ],
   "author": "Christopher Bishop",
   "license": "ISC",
