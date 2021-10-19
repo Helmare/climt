@@ -1,4 +1,4 @@
-# **C**ommand **L**ine **I**nterface: **M**inimalist **T**ables
+# `C`ommand `L`ine `I`nterface: `M`inimalist `T`ables
 climt is a minimalist table renderer for CLI's with zero dependencies.
 
 
