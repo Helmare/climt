@@ -90,8 +90,14 @@ class ClimtTable {
 
       // Add each row.
       data.forEach((row, y) => {
-        // Grab content
-        const content = (typeof(col.bind) === 'string' ? getProp(row, col.bind) : col.bind(row)).toString();
+        // Get data object
+        const obj = typeof(col.bind) === 'string' ? getProp(row, col.bind) : col.bind(row);
+
+        // Grab content.
+        let content = '';
+        if (obj !== undefined && obj !== null) {
+          content = obj.toString();
+        }
 
         // Setup width
         if (col.style.width <= 0) {
