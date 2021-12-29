@@ -42,7 +42,7 @@ class ClimtCell {
   _eval() {
     if (this.content.length > this.col._width - 2) {
       if (this.col.style.overflow == 'truncate') {
-        this._lines = [` ${this.content.substr(0, this.col._width - 5)}... `];
+        this._lines = [` ${this.content.substring(0, this.col._width - 5)}... `];
       }
       else {
         this._lines = wrap(this.content, this.col._width - 2);

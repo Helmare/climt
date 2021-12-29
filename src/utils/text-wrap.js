@@ -119,8 +119,8 @@ function cut(tokens, width) {
   }
 
   if (end < 0) {
-    const cut = tokens[0].value.substr(0, width);
-    tokens[0].value = tokens[0].value.substr(width);
+    const cut = tokens[0].value.substring(0, width);
+    tokens[0].value = tokens[0].value.substring(width);
     return cut;
   }
   else {

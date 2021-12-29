@@ -151,7 +151,7 @@ class ClimtTable {
 
     // Render
     console.log();
-    lines.forEach(line => console.log(line.substr(1)));
+    lines.forEach(line => console.log(line.substring(1)));
     console.log();
   }
 }
