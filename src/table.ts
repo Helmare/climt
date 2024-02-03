@@ -1,13 +1,7 @@
 import { ClimtCell } from './cell.js';
-import { ClimtBind, ClimtCloumnStyle, ClimtColumn, ClimtFormatter } from './column.js';
+import { DEFAULT_STYLE, ClimtBind, ClimtCloumnStyle, ClimtColumn } from './column.js';
 import { getProp } from './utils.js';
 
-const DEFAULT_STYLE: ClimtCloumnStyle = {
-  width: 0,
-  maxWidth: 0,
-  overflow: 'wrap',
-  align: 'left'
-};
 /**
  * Builds and renders tables to the CLI.
  */
@@ -156,3 +150,4 @@ export class ClimtTable {
     console.log();
   }
 }
+export type ClimtFormatter = (content: string, col: number, row: number) => string;

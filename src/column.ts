@@ -1,3 +1,9 @@
+export const DEFAULT_STYLE: ClimtCloumnStyle = {
+  width: 0,
+  maxWidth: 0,
+  overflow: 'wrap',
+  align: 'left'
+};
 export interface ClimtColumn {
   /** Binds data to each row using an ID string or a funciton. */
   bind: ClimtBind
@@ -19,4 +25,3 @@ export interface ClimtCloumnStyle {
   align: 'left'|'right'|'center';
 }
 export type ClimtBind = ((obj: any) => string)|string;
-export type ClimtFormatter = (content: string, col: number, row: number) => string;

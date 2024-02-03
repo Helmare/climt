@@ -1,6 +1,6 @@
 {
   "name": "climt",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A minimalist table renderer for CLI's with zero dependencies.",
   "main": "lib/index.js",
   "type": "module",
