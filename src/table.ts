@@ -72,7 +72,7 @@ export class ClimtTable<T> {
     // Convert data into an array.
     if (!Array.isArray(data)) data = [data];
 
-    const cells:ClimtCell[] = [];
+    const cells:ClimtCell<T>[] = [];
     this.cols.forEach((col, x) => {
       // Add header column.
       cells.push(new ClimtCell(x, -1, col, col.name));
@@ -80,7 +80,7 @@ export class ClimtTable<T> {
       // Add each row.
       data.forEach((row, y) => {
         // Get data object
-        const obj = typeof(col.bind) === 'string' ? getProp(row, col.bind) : col.bind(row);
+        const obj = typeof(col.bind) === 'string' ? getProp(row, col.bind) : col.bind(row, y);
 
         // Grab content.
         let content = '';

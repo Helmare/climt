@@ -24,4 +24,7 @@ export interface ClimtCloumnStyle {
   /** Text alignment. */
   align: 'left'|'right'|'center';
 }
-export type ClimtBind<T> = ((obj: T) => string)|string;
+/**
+ * Binds a columns content to a function or property.
+ */
+export type ClimtBind<T> = ((obj: T, index: number) => string)|string;
