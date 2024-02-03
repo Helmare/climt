@@ -4,9 +4,9 @@ export const DEFAULT_STYLE: ClimtCloumnStyle = {
   overflow: 'wrap',
   align: 'left'
 };
-export interface ClimtColumn {
+export interface ClimtColumn<T> {
   /** Binds data to each row using an ID string or a funciton. */
-  bind: ClimtBind
+  bind: ClimtBind<T>
   /** Display name of the column (ID by default). */
   name: string;
   /** Width of the column (may be different from `style.width`). *Should not be set by humans.* */
@@ -24,4 +24,4 @@ export interface ClimtCloumnStyle {
   /** Text alignment. */
   align: 'left'|'right'|'center';
 }
-export type ClimtBind = ((obj: any) => string)|string;
+export type ClimtBind<T> = ((obj: T) => string)|string;

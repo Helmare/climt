@@ -5,8 +5,8 @@ import { getProp } from './utils.js';
 /**
  * Builds and renders tables to the CLI.
  */
-export class ClimtTable {
-  cols: ClimtColumn[] = [];
+export class ClimtTable<T> {
+  cols: ClimtColumn<T>[] = [];
   formatters: ClimtFormatter[] = [];
 
   /**
@@ -14,11 +14,11 @@ export class ClimtTable {
    * 
    * @param name 
    * @param bind 
-   * @param [style]
-   * @return {ClimtTable} returns `this` for chaining.
+   * @param style
+   * @return `this` for chaining.
    */
-  column(name: string, bind: ClimtBind, style?: ClimtCloumnStyle): ClimtTable {
-    const col: ClimtColumn = {
+  column(name: string, bind: ClimtBind<T>, style?: ClimtCloumnStyle): ClimtTable<T> {
+    const col: ClimtColumn<T> = {
       name: name,
       bind: bind,
       style: { ...DEFAULT_STYLE, ...style  },
@@ -46,9 +46,9 @@ export class ClimtTable {
    * Adds a formatter for use in rendering.
    * 
    * @param fmtr
-   * @return returns `this` for chaining.
+   * @return `this` for chaining.
    */
-  format(fmtr: ClimtFormatter): ClimtTable {
+  format(fmtr: ClimtFormatter): ClimtTable<T> {
     this.formatters.push(fmtr);
     return this;
   }
@@ -68,7 +68,7 @@ export class ClimtTable {
    * 
    * @param data 
    */
-  render(data: any[]) {
+  render(data: T[]) {
     // Convert data into an array.
     if (!Array.isArray(data)) data = [data];
 
