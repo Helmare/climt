@@ -1,38 +1,34 @@
-const ClimtCell = require('./cell');
-const getProp = require('./utils/getprop');
+import { ClimtCell } from './cell.js';
+import { ClimtBind, ClimtCloumnStyle, ClimtColumn, ClimtFormatter } from './column.js';
+import { getProp } from './utils.js';
 
-/** @type {ClimtColumnStyle} */
-const DEFAULT_STYLE = {
+const DEFAULT_STYLE: ClimtCloumnStyle = {
   width: 0,
   maxWidth: 0,
   overflow: 'wrap',
   align: 'left'
 };
-
 /**
  * Builds and renders tables to the CLI.
  */
-class ClimtTable {
-  constructor() {
-    /** @type {ClimtColumn[]} */
-    this.cols = [];
-    /** @type {ClimtFormatter[]} */
-    this.formatters = [];
-  }
+export class ClimtTable {
+  cols: ClimtColumn[] = [];
+  formatters: ClimtFormatter[] = [];
 
   /**
    * Adds a column to the table.
    * 
-   * @param {string} name 
-   * @param {string|ClimtBind} bind 
-   * @param {ClimtColumnStyle} [style]
+   * @param name 
+   * @param bind 
+   * @param [style]
    * @return {ClimtTable} returns `this` for chaining.
    */
-  column(name, bind, style = {}) {
-    const col = {
+  column(name: string, bind: ClimtBind, style?: ClimtCloumnStyle): ClimtTable {
+    const col: ClimtColumn = {
       name: name,
       bind: bind,
       style: { ...DEFAULT_STYLE, ...style  },
+      _width: 0
     }
 
     if (col.style.width <= 0) {
@@ -46,27 +42,27 @@ class ClimtTable {
     return this;
   }
   /**
-   * @return {number} number of columns
+   * @return number of columns
    */
-  get count() {
+  get count(): number {
     return this.cols.length;
   }
 
   /**
    * Adds a formatter for use in rendering.
    * 
-   * @param {ClimtFormatter} fmtr
-   * @return {ClimtTable} returns `this` for chaining.
+   * @param fmtr
+   * @return returns `this` for chaining.
    */
-  format(fmtr) {
+  format(fmtr: ClimtFormatter): ClimtTable {
     this.formatters.push(fmtr);
     return this;
   }
   /**
-   * @param {string} content 
-   * @returns {string}
+   * @param content 
+   * @returns
    */
-  _format(content, col, row) {
+  _format(content: string, col: number, row: number) {
     this.formatters.forEach(fmtr => {
       content = fmtr(content, col, row);
     });
@@ -76,17 +72,16 @@ class ClimtTable {
   /**
    * Renders the data to the CLI using this table.
    * 
-   * @param {object[]} data 
+   * @param data 
    */
-  render(data) {
+  render(data: any[]) {
     // Convert data into an array.
     if (!Array.isArray(data)) data = [data];
 
-    /** @type {ClimtCell[]} */
-    const cells = [];
+    const cells:ClimtCell[] = [];
     this.cols.forEach((col, x) => {
       // Add header column.
-      cells.push(new ClimtCell(x, -1, col, col.name, x < this.count - 1));
+      cells.push(new ClimtCell(x, -1, col, col.name));
 
       // Add each row.
       data.forEach((row, y) => {
@@ -106,7 +101,7 @@ class ClimtTable {
         }
 
         // Push content cell.
-        cells.push(new ClimtCell(x, y, col, content, x < this.count - 1));
+        cells.push(new ClimtCell(x, y, col, content));
       });
     });
 
@@ -132,8 +127,8 @@ class ClimtTable {
     });
 
     // Prerender
-    const lines = [];
-    const rowy = [];
+    const lines: string[] = [];
+    const rowy: number[] = [];
     cells.forEach(cell => {
       // Setup lines and rowy if needed.
       const y = (rowy[cell.y] | 0);
@@ -161,32 +156,3 @@ class ClimtTable {
     console.log();
   }
 }
-module.exports = ClimtTable;
-
-/**
- * @typedef {object} ClimtColumn
- * @prop {string|ClimtBind} bind Binds data to each row using an ID string or a funciton.
- * @prop {string} [name] Display name of the column (ID by default).
- * @prop {number} [_width] Width of the column (may be different from `style.width`). *Should not be set by humans.*
- * 
- * @prop {ClimtColumnStyle} [style] Styling for the column.
- */
-/**
- * @typedef {object} ClimtColumnStyle
- * @prop {number} [width=0] Width of the column.
- * @prop {number} [maxWidth=0] Max width of the column. Ignored if `style.width` is set. `<= 0` values allow infinite width.
- * @prop {"wrap"|"truncate"} [overflow="wrap"] Determains what to do with overflow.
- * @prop {"left"|"right"|"center"} [align="left"] Text alignment.
- */
-/**
- * @callback ClimtBind
- * @param {object} row
- * @return {string} 
- */
-/**
- * @callback ClimtFormatter
- * @param {string} content Stringified cell data with empty space.
- * @param {number} col Index of the cell's column.
- * @param {number} row Index of the cell's row (`-1` for header).
- * @return {string} 
- */

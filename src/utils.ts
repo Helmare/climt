@@ -1,17 +1,42 @@
 /**
- * @typedef TxwToken
- * @prop {"ws"|"nw"} type
- * @prop {string} value
+ * Gets a property from an object. Uses '.' in the string
+ * to get nested properties.
+ * 
+ * @param obj 
+ * @param prop 
+ * @return
  */
+export function getProp(obj: any, prop: string|number): any {
+  if (typeof(prop) === 'number') {
+    return obj[prop];
+  }
+  else if (typeof(prop) === 'string') {
+    let result = obj;
+    prop.split('.').forEach(key => {
+      if (result && typeof(result) === 'object') {
+        result = result[key];
+      }
+      else {
+        result = undefined;
+      }
+    });
+    return result;
+  }
+  else throw new TypeError('Invalid type of "prop"');
+}
 
+export interface TxwToken {
+  type: 'ws'|'nw',
+  value: string
+}
 /**
  * Wraps a text to a specific width in characters.
  * 
- * @param {string} str 
- * @param {number} width
- * @returns {string[]} All lines created.
+ * @param str 
+ * @param width
+ * @returns All lines created.
  */
-function wrap(str, width) {
+export function wrap(str: string, width: number): string[] {
   const tokens = tokenize(str);
   const lines = [];
 
@@ -26,13 +51,13 @@ function wrap(str, width) {
  * Tokenizes a string into a series of whitespace
  * and non-whitespace tokens.
  * 
- * @returns {TxwToken[]}
+ * @param str
  */
-function tokenize(str) {
+export function tokenize(str: string): TxwToken[] {
   // Setup FSM
   let state = /\s/.test(str.charAt(0)) ? 0 : 1;
-  let tokens = [];
-  let curr = {
+  let tokens: TxwToken[] = [];
+  let curr: TxwToken = {
     type: state === 1 ? 'nw' : 'ws',
     value: str.charAt(0)
   };
@@ -85,10 +110,10 @@ function tokenize(str) {
  * Removes whitespace tokens from the start and end
  * in-place.
  * 
- * @param {TxwToken[]} tokens 
- * @return {TxwToken[]} reference to the array.
+ * @param tokens 
+ * @return reference to the array.
  */
-function trim(tokens) {
+export function trim(tokens: TxwToken[]): TxwToken[] {
   while (tokens[0].type === 'ws') {
     tokens.shift();
   }
@@ -100,11 +125,11 @@ function trim(tokens) {
 /**
  * Cuts the token array to the width in-place.
  * 
- * @param {TxwToken[]} tokens 
- * @param {number} width 
+ * @param tokens 
+ * @param width 
  * @return {string}
  */
-function cut(tokens, width) {
+export function cut(tokens: TxwToken[], width: number): string {
   // Setup
   let end = -1;
   let length = 0;
@@ -126,11 +151,9 @@ function cut(tokens, width) {
   else {
     let cut = '';
     while (end >= 0) {
-      cut += tokens.shift().value;
+      cut += tokens.shift()!.value;
       end--;
     }
     return cut.trim();
   }
 }
-
-module.exports = wrap;

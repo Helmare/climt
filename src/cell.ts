@@ -1,25 +1,24 @@
-const wrap = require('./utils/text-wrap');
+import { ClimtColumn } from './column.js';
+import { wrap } from './utils.js';
 
-class ClimtCell {
-  /**
-   * 
-   * @param {number} x 
-   * @param {number} y 
-   * @param {import(".").ClimtColumn} col
-   * @param {string} content 
-   */
-  constructor(x, y, col, content) {
+export class ClimtCell {
+  x: number;
+  y: number;
+  col: ClimtColumn;
+  content: string
+  _lines:string[] = [];
+
+  constructor(x: number, y: number, col: ClimtColumn, content: string) {
     this.x = x;
     this.y = y;
     this.col = col;
     this.content = content;
-    this._lines = [];
   }
 
   /**
-   * @returns {number} height of the cell.
+   * @returns height of the cell.
    */
-  get height() {
+  get height(): number {
     return this._lines.length;
   }
 
@@ -27,9 +26,9 @@ class ClimtCell {
    * Expands the height of _data to the new height.
    * Cannot shirnk.
    * 
-   * @param {number} height new height
+   * @param height new height
    */
-  expand(height) {
+  expand(height: number) {
     while (this.height < height) {
       this._lines.push(''.padStart(this.col._width));
     }
@@ -57,10 +56,10 @@ class ClimtCell {
   }
   /**
    * Evaluates a single line.
-   * @param {string} str 
-   * @returns {string}
+   * @param str 
+   * @returns
    */
-  _align(content) {
+  _align(content: string): string {
     const str = content.trim();
     if (this.col.style.align == 'center') {
       const leftover = this.col._width - str.length;
@@ -74,4 +73,3 @@ class ClimtCell {
     }
   }
 }
-module.exports = ClimtCell;

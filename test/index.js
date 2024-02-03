@@ -1,7 +1,7 @@
-const climt = require('../src');
+import { ClimtTable } from 'climt';
 
 // Create table.
-const table = climt();
+const table = new ClimtTable();
 
 // Column bound to the a property
 table.column('Alpha', 'a')

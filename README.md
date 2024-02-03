@@ -4,17 +4,21 @@ climt is a minimalist table renderer for CLI's with zero dependencies.
 
 ## Example
 ```js
-const climt = require('climt');
+import { ClimtTable } from 'climt';
 
 // Create table.
-const table = climt();
+const table = new ClimtTable();
 
 // Column bound to the a property
 table.column('Alpha', 'a')
 // Column bound to the sub.b property, with styling
 table.column('Beta', 'sub.b', { align: 'right' })
 // Column using a function for it's data.
-table.column('Charlie', row => row.a + row.sub.b);
+table.column('Charlie', row => {
+  if (row.a && row.sub && row.sub.b) {
+    return row.a + row.sub.b;
+  }
+});
 
 // Formats header.
 table.format((content, col, row) => {
@@ -32,6 +36,8 @@ table.render([
   { a: -1, sub: { b: 10 } },
   { a: 10, sub: { b: 2 } },
   { a: 15, sub: { b: -6 } },
+  { a: null, sub: { b: 10 } },
+  { a: 20 }
 ]);
 ```
 
@@ -43,4 +49,6 @@ table.render([
  -1    |   10 | 9
  10    |    2 | 12
  15    |   -6 | 9
+       |   10 | 
+ 20    |      |
 ```

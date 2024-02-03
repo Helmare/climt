@@ -1,28 +1,36 @@
 {
   "name": "climt",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "A minimalist table renderer for CLI's with zero dependencies.",
-  "main": "src/index.js",
+  "main": "lib/index.js",
+  "type": "module",
   "bin": {
     "climt": "test/index.js"
   },
   "scripts": {
-    "test": "node ./test"
+    "build": "tsup",
+    "test": "node ./test",
+    "prepack": "tsup"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hazdryx/climt.git"
+    "url": "git+https://github.com/Helmare/climt.git"
   },
   "keywords": [
-    "cli", "minimalist", "tables"
+    "cli",
+    "minimalist",
+    "tables"
   ],
   "author": "Christopher Bishop",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/hazdryx/climt/issues"
+    "url": "https://github.com/Helmare/climt/issues"
   },
-  "homepage": "https://github.com/hazdryx/climt#readme",
+  "homepage": "https://github.com/Helmare/climt#readme",
   "devDependencies": {
-    "@types/node": "^16.11.1"
+    "@types/node": "^20.11.16",
+    "climt": "file:climt-0.2.0.tgz",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
   }
 }
