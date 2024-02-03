@@ -1,14 +1,14 @@
 import { ClimtColumn } from './column.js';
 import { wrap } from './utils.js';
 
-export class ClimtCell {
+export class ClimtCell<T> {
   x: number;
   y: number;
-  col: ClimtColumn;
+  col: ClimtColumn<T>;
   content: string
   _lines:string[] = [];
 
-  constructor(x: number, y: number, col: ClimtColumn, content: string) {
+  constructor(x: number, y: number, col: ClimtColumn<T>, content: string) {
     this.x = x;
     this.y = y;
     this.col = col;
