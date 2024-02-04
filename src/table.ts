@@ -56,11 +56,11 @@ export class ClimtTable<T> {
    * @param content 
    * @returns
    */
-  _format(col: number, row: number, content: string, data: T) {
+  _format(ctx: ClimtContext<T>): string {
     this.formatters.forEach(fmtr => {
-      content = fmtr(col, row, content, data);
+      ctx.content = fmtr(ctx);
     });
-    return content;
+    return ctx.content;
   }
 
   /**
@@ -121,6 +121,13 @@ export class ClimtTable<T> {
     });
 
     // Prerender
+    const ctx: ClimtContext<T> = {
+      table: this,
+      data: data,
+      col: -1,
+      row: -1,
+      content: ''
+    };
     const lines: string[] = [];
     const rowy: number[] = [];
     cells.forEach(cell => {
@@ -133,7 +140,10 @@ export class ClimtTable<T> {
 
       // Incorporate data
       cell._lines.forEach((line, i) => {
-        lines[y + i] += `|${this._format(cell.x, cell.y, line, data[cell.y])}`;
+        ctx.col = cell.x;
+        ctx.row = cell.y;
+        ctx.content = line,
+        lines[y + i] += `|${this._format(ctx)}`;
       });
     });
 
@@ -150,4 +160,12 @@ export class ClimtTable<T> {
     console.log();
   }
 }
-export type ClimtFormatter<T> = (col: number, row: number, content: string, data: T) => string;
+export type ClimtContext<T> = {
+  table: ClimtTable<T>;
+  data: T[];
+
+  col: number;
+  row: number;
+  content: string;
+}
+export type ClimtFormatter<T> = (ctx: ClimtContext<T>) => string;

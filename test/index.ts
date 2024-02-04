@@ -21,12 +21,12 @@ table.column('Charlie', row => {
 });
 
 // Formats header.
-table.format((col, row, content) => {
-  if (row == -1) {
-    return content.toUpperCase();
+table.format((ctx) => {
+  if (ctx.row == -1) {
+    return ctx.content.toUpperCase();
   }
   else {
-    return content;
+    return ctx.content;
   }
 });
 
