@@ -27,4 +27,4 @@ export interface ClimtCloumnStyle {
 /**
  * Binds a columns content to a function or property.
  */
-export type ClimtBind<T> = ((obj: T, index: number) => string|undefined)|string;
+export type ClimtBind<T> = ((obj: T, index: number) => any|undefined)|string;
