@@ -3,11 +3,17 @@ climt is a minimalist table renderer for CLI's with zero dependencies.
 
 
 ## Example
-```js
+```ts
 import { ClimtTable } from 'climt';
+type Data = {
+  a?: number|null;
+  sub?: {
+    b: number
+  }
+};
 
 // Create table.
-const table = new ClimtTable();
+const table = new ClimtTable<Data>();
 
 // Column bound to the a property
 table.column('Alpha', 'a')
@@ -16,12 +22,12 @@ table.column('Beta', 'sub.b', { align: 'right' })
 // Column using a function for it's data.
 table.column('Charlie', row => {
   if (row.a && row.sub && row.sub.b) {
-    return row.a + row.sub.b;
+    return (row.a + row.sub.b).toString();
   }
 });
 
 // Formats header.
-table.format((content, col, row) => {
+table.format((col, row, content) => {
   if (row == -1) {
     return content.toUpperCase();
   }
