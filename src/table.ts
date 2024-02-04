@@ -1,5 +1,5 @@
 import { ClimtCell } from './cell.js';
-import { DEFAULT_STYLE, ClimtBind, ClimtCloumnStyle, ClimtColumn } from './column.js';
+import { DEFAULT_STYLE, ClimtBind, ClimtCloumnStyle, ClimtColumn, ClimtBindContext } from './column.js';
 import { getProp } from './utils.js';
 
 /**
@@ -56,7 +56,7 @@ export class ClimtTable<T> {
    * @param content 
    * @returns
    */
-  _format(ctx: ClimtContext<T>): string {
+  _format(ctx: ClimtFormatContext<T>): string {
     this.formatters.forEach(fmtr => {
       ctx.content = fmtr(ctx);
     });
@@ -72,7 +72,12 @@ export class ClimtTable<T> {
     // Convert data into an array.
     const data = Array.isArray(dat) ? dat : [dat];
 
-    const cells:ClimtCell<T>[] = [];
+    const cells: ClimtCell<T>[] = [];
+    const bindCtx: ClimtBindContext<T> = {
+      table: this,
+      data: data,
+      row: -1
+    };
     this.cols.forEach((col, x) => {
       // Add header column.
       cells.push(new ClimtCell(x, -1, col, col.name));
@@ -80,7 +85,9 @@ export class ClimtTable<T> {
       // Add each row.
       data.forEach((row, y) => {
         // Get data object
-        const obj = typeof(col.bind) === 'string' ? getProp(row, col.bind) : col.bind(row, y);
+        bindCtx.obj = row;
+        bindCtx.row = y;
+        const obj = typeof(col.bind) === 'string' ? getProp(row, col.bind) : col.bind(bindCtx);
 
         // Grab content.
         let content = '';
@@ -121,7 +128,7 @@ export class ClimtTable<T> {
     });
 
     // Prerender
-    const ctx: ClimtContext<T> = {
+    const ctx: ClimtFormatContext<T> = {
       table: this,
       data: data,
       col: -1,
@@ -160,7 +167,7 @@ export class ClimtTable<T> {
     console.log();
   }
 }
-export type ClimtContext<T> = {
+export type ClimtFormatContext<T> = {
   table: ClimtTable<T>;
   data: T[];
 
@@ -168,4 +175,4 @@ export type ClimtContext<T> = {
   row: number;
   content: string;
 }
-export type ClimtFormatter<T> = (ctx: ClimtContext<T>) => string;
+export type ClimtFormatter<T> = (ctx: ClimtFormatContext<T>) => string;

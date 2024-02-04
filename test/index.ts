@@ -14,9 +14,9 @@ table.column('Alpha', 'a')
 // Column bound to the sub.b property, with styling
 table.column('Beta', 'sub.b', { align: 'right' })
 // Column using a function for it's data.
-table.column('Charlie', row => {
-  if (row.a && row.sub && row.sub.b) {
-    return (row.a + row.sub.b).toString();
+table.column('Charlie', ({obj}) => {
+  if (obj!.a && obj!.sub && obj!.sub.b) {
+    return (obj!.a + obj!.sub.b).toString();
   }
 });
 
