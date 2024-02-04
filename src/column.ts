@@ -16,15 +16,15 @@ export interface ClimtColumn<T> {
 }
 export interface ClimtCloumnStyle {
   /** Width of the column. */
-  width: number;
+  width?: number;
   /** Max width of the column. Ignored if `style.width` is set. `<= 0` values allow infinite width. */
-  maxWidth: number;
+  maxWidth?: number;
   /** Determains what to do with overflow. */
-  overflow: 'wrap'|'truncate'
+  overflow?: 'wrap'|'truncate'
   /** Text alignment. */
-  align: 'left'|'right'|'center';
+  align?: 'left'|'right'|'center';
 }
 /**
  * Binds a columns content to a function or property.
  */
-export type ClimtBind<T> = ((obj: T, index: number) => string)|string;
+export type ClimtBind<T> = ((obj: T, index: number) => string|undefined)|string;

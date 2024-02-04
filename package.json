@@ -4,12 +4,9 @@
   "description": "A minimalist table renderer for CLI's with zero dependencies.",
   "main": "lib/index.js",
   "type": "module",
-  "bin": {
-    "climt": "test/index.js"
-  },
   "scripts": {
     "build": "tsup",
-    "test": "node ./test",
+    "test": "tsc ./test/index.ts -t esnext -m nodenext && node ./test/index.js",
     "prepack": "tsup"
   },
   "repository": {
@@ -29,7 +26,7 @@
   "homepage": "https://github.com/Helmare/climt#readme",
   "devDependencies": {
     "@types/node": "^20.11.16",
-    "climt": "file:climt-0.2.0.tgz",
+    "climt": "file:climt-0.2.1.tgz",
     "tsup": "^8.0.1",
     "typescript": "^5.3.3"
   }

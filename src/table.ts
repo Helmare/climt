@@ -7,7 +7,7 @@ import { getProp } from './utils.js';
  */
 export class ClimtTable<T> {
   cols: ClimtColumn<T>[] = [];
-  formatters: ClimtFormatter[] = [];
+  formatters: ClimtFormatter<T>[] = [];
 
   /**
    * Adds a column to the table.
@@ -25,11 +25,11 @@ export class ClimtTable<T> {
       _width: 0
     }
 
-    if (col.style.width <= 0) {
-      col._width = col.style.maxWidth <= 0 ? col.name.length + 2 : Math.min(col.style.maxWidth, col.name.length + 2);
+    if (col.style.width! <= 0) {
+      col._width = col.style.maxWidth! <= 0 ? col.name.length + 2 : Math.min(col.style.maxWidth!, col.name.length + 2);
     }
     else {
-      col._width = col.style.width;
+      col._width = col.style.width!;
     }
 
     this.cols.push(col);
@@ -48,7 +48,7 @@ export class ClimtTable<T> {
    * @param fmtr
    * @return `this` for chaining.
    */
-  format(fmtr: ClimtFormatter): ClimtTable<T> {
+  format(fmtr: ClimtFormatter<T>): ClimtTable<T> {
     this.formatters.push(fmtr);
     return this;
   }
@@ -56,9 +56,9 @@ export class ClimtTable<T> {
    * @param content 
    * @returns
    */
-  _format(content: string, col: number, row: number) {
+  _format(col: number, row: number, content: string, data: T) {
     this.formatters.forEach(fmtr => {
-      content = fmtr(content, col, row);
+      content = fmtr(col, row, content, data);
     });
     return content;
   }
@@ -89,9 +89,9 @@ export class ClimtTable<T> {
         }
 
         // Setup width
-        if (col.style.width <= 0) {
+        if (col.style.width! <= 0) {
           const width = Math.max(col._width, content.length + 2);
-          col._width = col.style.maxWidth <= 0 ? width : Math.min(col.style.maxWidth, width);
+          col._width = col.style.maxWidth! <= 0 ? width : Math.min(col.style.maxWidth!, width);
         }
 
         // Push content cell.
@@ -133,7 +133,7 @@ export class ClimtTable<T> {
 
       // Incorporate data
       cell._lines.forEach((line, i) => {
-        lines[y + i] += `|${this._format(line, cell.x, cell.y)}`;
+        lines[y + i] += `|${this._format(cell.x, cell.y, line, data[cell.y])}`;
       });
     });
 
@@ -150,4 +150,4 @@ export class ClimtTable<T> {
     console.log();
   }
 }
-export type ClimtFormatter = (content: string, col: number, row: number) => string;
+export type ClimtFormatter<T> = (col: number, row: number, content: string, data: T) => string;
