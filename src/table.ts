@@ -68,9 +68,9 @@ export class ClimtTable<T> {
    * 
    * @param data 
    */
-  render(data: T[]) {
+  render(dat: T|T[]) {
     // Convert data into an array.
-    if (!Array.isArray(data)) data = [data];
+    const data = Array.isArray(dat) ? dat : [dat];
 
     const cells:ClimtCell<T>[] = [];
     this.cols.forEach((col, x) => {
